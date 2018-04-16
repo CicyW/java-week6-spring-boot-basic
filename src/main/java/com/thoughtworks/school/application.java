@@ -45,6 +45,15 @@ public class application {
         return new ResponseEntity<String>(HttpStatus.CREATED);
     }
 
+    @RequestMapping(value = "/employees/{employeeId}", method = RequestMethod.PUT)
+    ResponseEntity<?> updateEmployee(@PathVariable int employeeId, @RequestBody Employee input){
+        Employee employee = employees.stream().filter(e -> e.getId() == employeeId).findFirst().get();
+        employee.setAge(input.getAge());
+        employee.setGender(input.getGender());
+        employee.setName(input.getName());
+        return new ResponseEntity<String>(HttpStatus.OK);
+    }
+
 
     public static void main(String[] args){
         SpringApplication.run(application.class, args);
