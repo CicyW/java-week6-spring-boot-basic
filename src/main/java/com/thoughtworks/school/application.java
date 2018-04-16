@@ -34,28 +34,40 @@ public class application {
     }
 
     @RequestMapping(value = "/employees/{employeeId}", method = RequestMethod.GET)
-    Employee getEmployee(@PathVariable int employeeId){
+    ResponseEntity<?> getEmployee(@PathVariable int employeeId){
+        boolean match = employees.stream().anyMatch(e -> e.getId() == employeeId);
+        if(!match)
+            return new ResponseEntity<>("cannot find such employee with input id", HttpStatus.NOT_FOUND);
         Employee employee = employees.stream().filter(e -> e.getId() == employeeId).findFirst().get();
-        return employee;
+        return new ResponseEntity<Object>(employee, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/employees", method = RequestMethod.POST)
     ResponseEntity<?> createEmployee(@RequestBody Employee input){
+        boolean match = employees.stream().anyMatch(e -> e.getId() == input.getId());
+        if(match)
+            return new ResponseEntity<>("The employee id already exist", HttpStatus.CONFLICT);
         employees.add(input);
         return new ResponseEntity<String>(HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/employees/{employeeId}", method = RequestMethod.PUT)
     ResponseEntity<?> updateEmployee(@PathVariable int employeeId, @RequestBody Employee input){
+        boolean match = employees.stream().anyMatch(e -> e.getId() == employeeId);
+        if(!match)
+            return new ResponseEntity<>("cannot find such employee with input id", HttpStatus.NOT_FOUND);
         Employee employee = employees.stream().filter(e -> e.getId() == employeeId).findFirst().get();
         employee.setAge(input.getAge());
         employee.setGender(input.getGender());
         employee.setName(input.getName());
-        return new ResponseEntity<String>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/employees/{employeeId}", method = RequestMethod.DELETE)
     ResponseEntity<?> removeEmployee(@PathVariable int employeeId){
+        boolean match = employees.stream().anyMatch(e -> e.getId() == employeeId);
+        if(!match)
+            return new ResponseEntity<>("cannot find such employee with input id", HttpStatus.NOT_FOUND);
         Employee employee = employees.stream().filter(e -> e.getId() == employeeId).findFirst().get();
         employees.remove(employee);
         return new ResponseEntity<String>(HttpStatus.OK);
