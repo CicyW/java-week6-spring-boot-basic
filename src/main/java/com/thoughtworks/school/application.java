@@ -54,6 +54,12 @@ public class application {
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/employees/{employeeId}", method = RequestMethod.DELETE)
+    ResponseEntity<?> removeEmployee(@PathVariable int employeeId){
+        Employee employee = employees.stream().filter(e -> e.getId() == employeeId).findFirst().get();
+        employees.remove(employee);
+        return new ResponseEntity<String>(HttpStatus.OK);
+    }
 
     public static void main(String[] args){
         SpringApplication.run(application.class, args);
