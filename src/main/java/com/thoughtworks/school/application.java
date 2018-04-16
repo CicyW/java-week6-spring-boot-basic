@@ -2,6 +2,8 @@ package com.thoughtworks.school;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -31,10 +33,16 @@ public class application {
         return employees;
     }
 
-    @RequestMapping(value = "/employee/{employeeId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/employees/{employeeId}", method = RequestMethod.GET)
     Employee getEmployee(@PathVariable int employeeId){
         Employee employee = employees.stream().filter(e -> e.getId() == employeeId).findFirst().get();
         return employee;
+    }
+
+    @RequestMapping(value = "/employees", method = RequestMethod.POST)
+    ResponseEntity<?> createEmployee(@RequestBody Employee input){
+        employees.add(input);
+        return new ResponseEntity<String>(HttpStatus.CREATED);
     }
 
 
