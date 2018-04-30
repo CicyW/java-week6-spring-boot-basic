@@ -34,12 +34,16 @@ public class application {
     }
 
     @RequestMapping(value = "/employees/{employeeId}", method = RequestMethod.GET)
-    ResponseEntity<?> getEmployee(@PathVariable int employeeId){
-        boolean match = employees.stream().anyMatch(e -> e.getId() == employeeId);
-        if(!match)
-            return new ResponseEntity<>("cannot find such employee with input id", HttpStatus.NOT_FOUND);
+    Employee getEmployee(@PathVariable int employeeId){
+        this.validateEmployee(employeeId);
         Employee employee = employees.stream().filter(e -> e.getId() == employeeId).findFirst().get();
-        return new ResponseEntity<Object>(employee, HttpStatus.OK);
+        return employee;
+    }
+
+    private void validateEmployee(int employeeId) {
+        boolean match = employees.stream().anyMatch(e -> e.getId() == employeeId);
+        if (!match)
+            throw new EmployeeNotFoundException(employeeId);
     }
 
     @RequestMapping(value = "/employees", method = RequestMethod.POST)
@@ -52,25 +56,20 @@ public class application {
     }
 
     @RequestMapping(value = "/employees/{employeeId}", method = RequestMethod.PUT)
-    ResponseEntity<?> updateEmployee(@PathVariable int employeeId, @RequestBody Employee input){
-        boolean match = employees.stream().anyMatch(e -> e.getId() == employeeId);
-        if(!match)
-            return new ResponseEntity<>("cannot find such employee with input id", HttpStatus.NOT_FOUND);
+    Employee updateEmployee(@PathVariable int employeeId, @RequestBody Employee input){
+        this.validateEmployee(employeeId);
         Employee employee = employees.stream().filter(e -> e.getId() == employeeId).findFirst().get();
         employee.setAge(input.getAge());
         employee.setGender(input.getGender());
         employee.setName(input.getName());
-        return new ResponseEntity<>(HttpStatus.OK);
+        return employee;
     }
 
     @RequestMapping(value = "/employees/{employeeId}", method = RequestMethod.DELETE)
-    ResponseEntity<?> deleteEmployee(@PathVariable int employeeId){
-        boolean match = employees.stream().anyMatch(e -> e.getId() == employeeId);
-        if(!match)
-            return new ResponseEntity<>("cannot find such employee with input id", HttpStatus.NOT_FOUND);
+    void deleteEmployee(@PathVariable int employeeId){
+        this.validateEmployee(employeeId);
         Employee employee = employees.stream().filter(e -> e.getId() == employeeId).findFirst().get();
         employees.remove(employee);
-        return new ResponseEntity<String>(HttpStatus.OK);
     }
 
     public static void main(String[] args){
