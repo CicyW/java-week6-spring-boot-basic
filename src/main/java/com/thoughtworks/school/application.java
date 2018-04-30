@@ -64,7 +64,7 @@ public class application {
     }
 
     @RequestMapping(value = "/employees/{employeeId}", method = RequestMethod.DELETE)
-    ResponseEntity<?> removeEmployee(@PathVariable int employeeId){
+    ResponseEntity<?> deleteEmployee(@PathVariable int employeeId){
         boolean match = employees.stream().anyMatch(e -> e.getId() == employeeId);
         if(!match)
             return new ResponseEntity<>("cannot find such employee with input id", HttpStatus.NOT_FOUND);
